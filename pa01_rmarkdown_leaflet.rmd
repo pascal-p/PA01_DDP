@@ -1,0 +1,107 @@
+---
+title: "R Markdown and Leaflet"
+author: "Pascal P"
+date: "14 July 2018"
+output: 
+  html_document:
+    toc: true
+    df_print: paged
+    highlight: zenburn
+    theme: simplex
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, eval=FALSE, cache=TRUE, warning=FALSE, message=FALSE, fig.path='figure/')
+```
+
+## Interactive map with leaflet.
+ - Main cities in New Zealand with main universities (not all).  
+ 
+ 
+ - Sources:
+    - for cities/population: https://en.wikipedia.org/wiki/List_of_New_Zealand_urban_areas [2017]  
+    - for universities: https://en.wikipedia.org/wiki/List_of_universities_in_New_Zealand  
+    - for coordinates: https://www.worldatlas.com/oc/nz/cities-in-new-zealand.html  
+  
+
+ - Preparation
+```{r, echo=TRUE, eval=TRUE, cache=TRUE}
+library(leaflet)
+
+df <- data.frame(lat = c(-36.866670, -41.286640, -43.533330, -37.783330, -45.874160, -37.686110, -40.356360),
+                 lng = c(174.766670, 174.775570, 172.633330, 175.283330, 170.503610, 176.166670, 175.611130),
+                 pop = c(1534700, 412500, 396700, 235900, 120200, 137900, 85300),
+                 uni = c("University of Aukland", "Victoria University Wellington", "University of Canterburry", 
+                         "University of Waikato", "University of Otago", "", "Massey University"),
+                 uni_pop = c(33028, 17227, 12108, 10094, 18896, 0, 19074),
+                 uni_lnk = c("<a href='http://www.auckland.ac.nz/'> Auckland University</a>", 
+                             "<a href='http://www.victoria.ac.nz/'> Victoria University of Wellington</a>",
+                             "<a href='http://www.canterbury.ac.nz/'> University of Canterburry</a>",
+                             "<a href='http://www.waikato.ac.nz/'> University of Waikato</a>",
+                             "<a href='https://www.otago.ac.nz/'> University of Otago</a>",
+                             "",
+                             "<a href='http://www.massey.ac.nz/'></a>"
+                             ),
+                 city = c("Auckland", "Wellington", "Christchurch", "Hamilton", "Dunedin", "Tauranga", "Palmerston North")
+)
+
+f <- 14
+icons <- iconList(
+  makeIcon(
+    "icons/University_of_Auckland_Coat_of_Arms.png",
+    iconWidth = f*252/297, iconHeight = f,
+    iconAnchorX = f*252/297/2, iconAnchorY = f/2
+  ),
+  makeIcon(
+    "icons/Vuw-shield.png",
+    iconWidth = f*325/310, iconHeight = f,
+    iconAnchorX = f*325/310/2, iconAnchorY = f/2
+  ),
+  makeIcon(
+    "icons/University_of_Canterbury_Coat_of_Arms.png",
+    iconWidth = f*347/330, iconHeight = f,
+    iconAnchorX = f*347/330/2, iconAnchorY = f/2
+  ), 
+  makeIcon(
+    "icons/102px-University_of_Waikato_logo.svg.png",
+    iconWidth = f*102/118, iconHeight = f,
+    iconAnchorX = f*102/118/2, iconAnchorY = f/2
+  ),
+  makeIcon(
+    "icons/University_of_Otago_logo.png",
+    iconWidth = f*300/280, iconHeight = f,
+    iconAnchorX = f*300/280/2, iconAnchorY = f/2
+  ),
+
+  makeIcon(
+    "icons/43533.png", # No uni in Tauranga
+    iconWidth = 2, iconHeight = 2
+  ),
+  makeIcon(
+    "icons/Massey_University_logo.png",
+    iconWidth = f*200/200, iconHeight = f,
+    iconAnchorX = f*200/200/2, iconAnchorY = f/2
+  )
+)
+```
+
+## Resulting Map
+
+```{r, echo=FALSE, eval=TRUE, cache=TRUE}
+# [-36.0, 172.0],
+
+my_map <- subset(df, select = c(lat, lng, city)) %>%
+  leaflet(width=900, height=600) %>%
+  setView(lng = 175.0, lat = -42.0, zoom=5) %>%
+          # options=leafletOptions(center=orig_pos)) %>% 
+  addTiles() %>%
+  addCircles(weight=2, radius=sqrt(df$pop) * 50, color="darkred", opacity=0.6) %>%
+  addMarkers(icon=icons, popup=df$uni_lnk) %>%
+  addLegend(labels=c("city", "main university"), colors=c("darkred", "slateblue"), position="bottomright")
+  
+my_map
+```
+
+## Context
+  Peer-graded assignment, https://www.coursera.org/learn/data-products/peer/NLn0H/r-markdown-and-leaflet
