@@ -25,8 +25,8 @@ knitr::opts_chunk$set(echo=TRUE, eval=FALSE, cache=TRUE, warning=FALSE, message=
     - for coordinates: https://www.worldatlas.com/oc/nz/cities-in-new-zealand.html  
   
 
- - Preparation
-```{r, echo=TRUE, eval=TRUE, cache=TRUE}
+  - Preparation
+```{r, echo=FALSE, eval=TRUE, cache=TRUE}
 library(leaflet)
 
 df <- data.frame(lat = c(-36.866670, -41.286640, -43.533330, -37.783330, -45.874160, -37.686110, -40.356360),
@@ -89,10 +89,8 @@ icons <- iconList(
 ## Resulting Map
 
 ```{r, echo=FALSE, eval=TRUE, cache=TRUE}
-# [-36.0, 172.0],
-
 my_map <- subset(df, select = c(lat, lng, city)) %>%
-  leaflet(width=900, height=600) %>%
+  leaflet(width=672, height=480) %>%
   setView(lng = 175.0, lat = -42.0, zoom=5) %>%
           # options=leafletOptions(center=orig_pos)) %>% 
   addTiles() %>%
