@@ -2,55 +2,38 @@
 title: "R Markdown and Leaflet"
 author: "Pascal P"
 date: "14 July 2018"
-output: 
-  html_document:
-    toc: true
-#    highlight: zenburn
-    theme: simplex
-
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=TRUE, eval=FALSE, cache=FALSE, warning=FALSE, message=FALSE, fig.path='figure/')
+knitr::opts_chunk$set(echo=FALSE, cache=FALSE, message=FALSE, eval=TRUE)
 ```
 
 ## Interactive map with leaflet.
- - Main cities in New Zealand with main universities (not all).  
- 
+ - Main cities in New Zealand.  
  
  - Sources:
     - for cities/population: https://en.wikipedia.org/wiki/List_of_New_Zealand_urban_areas [2017]  
-    - for universities: https://en.wikipedia.org/wiki/List_of_universities_in_New_Zealand  
     - for coordinates: https://www.worldatlas.com/oc/nz/cities-in-new-zealand.html  
   
-
   - Preparation
-```{r, echo=FALSE, eval=TRUE, cache=TRUE}
+```{r}
 library(leaflet)
 
-df <- data.frame(lat = c(-36.866670, -41.286640, -43.533330, -37.783330, -45.874160),
-                 lng = c(174.766670, 174.775570, 172.633330, 175.283330, 170.503610),
-                 pop = c(1534700, 412500, 396700, 235900, 120200),
-                 uni = c("University of Aukland", "Victoria University Wellington", "University of Canterburry", 
-                         "University of Waikato", "University of Otago"),
-                 uni_lnk = c("<a href='http://www.auckland.ac.nz/'> Auckland University</a>", 
-                             "<a href='http://www.victoria.ac.nz/'> Victoria University of Wellington</a>",
-                             "<a href='http://www.canterbury.ac.nz/'> University of Canterburry</a>",
-                             "<a href='http://www.waikato.ac.nz/'> University of Waikato</a>",
-                             "<a href='https://www.otago.ac.nz/'> University of Otago</a>"
-                             ),
-                 city = c("Auckland", "Wellington", "Christchurch", "Hamilton", "Dunedin")
+df <- data.frame(lat = c(-36.866670, -41.286640, -43.533330),
+                 lng = c(174.766670, 174.775570, 172.633330),
+                 pop = c(1534700, 412500, 396700),
+                 city = c("Auckland", "Wellington", "Christchurch")
 )
 ```
 
 ## Resulting Map
 
-```{r, echo=FALSE, eval=TRUE, cache=TRUE}
-my_map <- subset(df, select = c(lat, lng, city)) %>%
+```{r}
+my_map <- df %>%
   leaflet() %>%
   addTiles() %>%
-  addCircles(weight=2, radius=sqrt(df$pop) * 50, color="darkred", opacity=0.6) %>%
-  addMarkers(popup=df$uni_lnk)
+  addCircles(weight=2, radius=sqrt(df$pop)*40, color="darkred", opacity=0.6)
   
 my_map
 ```
